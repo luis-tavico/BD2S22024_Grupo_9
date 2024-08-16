@@ -1,5 +1,40 @@
 USE BD2;
 
+CREATE TRIGGER Trigger1 
+ON practica1.Usuarios
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @procedureName VARCHAR(75),@sms VARCHAR(MAX), @id uniqueidentifier;
+    SET @procedureName =OBJECT_NAME(@@PROCID); 
+    PRINT @procedureName 
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id=Id FROM INSERTED
+            SET @sms='Se ha modificado el usuario con id: '+CAST(@id AS NVARCHAR(36));              
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id=Id FROM INSERTED
+            SET @sms='Se creado un nuevo usuario con id: '+CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id=Id FROM DELETED
+            SET @sms='Se eliminada al usuario con id: '+CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+
+
+
+
+
+
 -- Usuarios insert,update, delete 
 CREATE TRIGGER TR_USUARIO_INSERT
 ON practica1.Usuarios for INSERT
@@ -7,7 +42,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=Id FROM INSERTED
-    SET @sms='Se creado un nuevo usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se creado un nuevo usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -19,7 +54,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=Id FROM INSERTED
-    SET @sms='Se ha modificado el usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se ha modificado el usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -30,8 +65,8 @@ ON practica1.Usuarios for DELETE
 AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
-    SELECT @id=Id FROM INSERTED
-    SET @sms='Se ha eliminado el usuario con id: '+CAST(@id AS VARCHAR);
+    SELECT @id=Id FROM DELETED
+    SET @sms='Se ha eliminado el usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -44,7 +79,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se creado un nuevo perfil de estudiante del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se creado un nuevo perfil de estudiante del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -56,7 +91,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha modificado el perfil de estudiante del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se ha modificado el perfil de estudiante del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -67,8 +102,8 @@ ON practica1.ProfileStudent for DELETE
 AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
-    SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha eliminado el perfil de estudiante del usuario con id: '+CAST(@id AS VARCHAR);
+    SELECT @id=UserId FROM DELETED
+    SET @sms='Se ha eliminado el perfil de estudiante del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -81,7 +116,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se creado un nueva autenticación de dos factores del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se creado un nueva autenticación de dos factores del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -93,7 +128,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha modificado la autenticación de dos factores del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se ha modificado la autenticación de dos factores del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -104,8 +139,8 @@ ON practica1.TFA for DELETE
 AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
-    SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha eliminado la autenticación de dos factores del usuario con id: '+CAST(@id AS VARCHAR);
+    SELECT @id=UserId FROM DELETED
+    SET @sms='Se ha eliminado la autenticación de dos factores del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -119,7 +154,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se creado un nuevo rol del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se creado un nuevo rol del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -131,7 +166,7 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
     SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha modificado el rol del usuario con id: '+CAST(@id AS VARCHAR);
+    SET @sms='Se ha modificado el rol del usuario con id: '+CAST(@id AS AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -142,8 +177,8 @@ ON practica1.UsuarioRole for DELETE
 AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
-    SELECT @id=UserId FROM INSERTED
-    SET @sms='Se ha eliminado el rol del usuario con id: '+CAST(@id AS VARCHAR);
+    SELECT @id=UserId FROM DELETED
+    SET @sms='Se ha eliminado el rol del usuario con id: '+CAST(@id AS NVARCHAR(36));
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
@@ -157,8 +192,45 @@ AS BEGIN
     SET NOCOUNT ON
     DECLARE @sms VARCHAR(MAX), @id uniqueidentifier,@message VARCHAR(MAX);
     SELECT @id=UserId, @message=Message FROM INSERTED
-    SET @sms='Se notificado usuario con id: '+CAST(@id AS VARCHAR)+' Mensaje:'+@message;
+    SET @sms='Se notificado usuario con id: '+CAST(@id AS NVARCHAR(36))+' Mensaje:'+@message;
     INSERT INTO dbo.practica1.HistoryLog(Date,Description) 
+    VALUES(GETDATE(),@sms)
+END;
+GO
+
+--  ROL insert,update, delete 
+CREATE TRIGGER TR_ROL_INSERT
+ON practica1.Roles for INSERT
+AS BEGIN
+    SET NOCOUNT ON
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    SELECT @id=Id FROM INSERTED
+    SET @sms='Se creado un nuevo rol id: '+CAST(@id AS NVARCHAR(36));
+    INSERT INTO practica1.HistoryLog(Date,Description) 
+    VALUES(GETDATE(),@sms)
+END;
+GO
+
+CREATE TRIGGER TR_ROL_UPDATE
+ON practica1.Roles for UPDATE
+AS BEGIN
+    SET NOCOUNT ON
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    SELECT @id=Id FROM INSERTED
+    SET @sms='Se ha modificado el rol con id: '+CAST(@id AS NVARCHAR(36));
+    INSERT INTO practica1.HistoryLog(Date,Description) 
+    VALUES(GETDATE(),@sms)
+END;
+GO
+
+CREATE TRIGGER TR_ROL_DELETE
+ON practica1.Roles for DELETE
+AS BEGIN
+    SET NOCOUNT ON
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    SELECT @id=Id FROM DELETED
+    SET @sms='Se ha eliminado el rol con id: '+CAST(@id AS NVARCHAR(36));
+    INSERT INTO practica1.HistoryLog(Date,Description) 
     VALUES(GETDATE(),@sms)
 END;
 GO

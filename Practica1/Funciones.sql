@@ -1,1 +1,1 @@
-USE DB2;
+USE BD2;
