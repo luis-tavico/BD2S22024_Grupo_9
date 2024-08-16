@@ -1,5 +1,9 @@
 USE BD2;
 
+--- ***********************
+--  *  Procedimiento PR1  *
+--  ***********************
+
 CREATE PROCEDURE PR1
 (
     @FirstName NVARCHAR(max),
@@ -20,13 +24,13 @@ BEGIN
                 RETURN;
             END
 
-            IF @Firstname LIKE '%[^A-Za-z]%' AND @Lastname LIKE '%[^A-Za-z]%'
+            IF PATINDEX('%[^A-Za-z ]%',@Firstname)>0 OR PATINDEX('%[^A-Za-z ]%',@Lastname)>0
                 BEGIN
                     RAISERROR ('El nombre y apellido solo pueden contener letras.', 16, 1);
                     RETURN;
                 END
             
-            IF @Email LIKE '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+            IF @Email NOT LIKE '_%@__%.__%'
                 --'%_@__%.__%'
                 BEGIN
                     RAISERROR ('El formato del correo electrónico no es válido.', 16, 1);
@@ -75,6 +79,96 @@ BEGIN
 END;
 GO
 
+--- ***********************
+--  *  Procedimiento PR2  *
+--  ***********************
+
+
+CREATE PROCEDURE PR2
+    @Email NVARCHAR(max),
+    @CodCourse INT
+AS
+BEGIN
+    BEGIN TRANSACTION;
+
+        BEGIN TRY
+            IF @Email = '' OR @CodCourse IS NULL
+                BEGIN
+                    RAISERROR ('Todos los campos son obligatorios.', 16, 1);
+                END    
+
+            IF @Email NOT LIKE '_%@__%.__%'
+            --'%_@__%.__%'
+            BEGIN
+                RAISERROR ('El formato del correo electrónico no es válido.', 16, 1);
+                RETURN;
+            END
+
+
+
+            DECLARE @UserId UNIQUEIDENTIFIER;
+            SELECT @UserId = Id FROM practica1.Usuarios WHERE Email = @Email AND EmailConfirmed = 1;
+
+            IF @UserId IS NULL
+            BEGIN
+                RAISERROR ('Usuario no encontrado o email no confirmado.', 16, 1);
+                RETURN;
+            END
+
+            -- Asignar rol de tutor
+            INSERT INTO practica1.UsuarioRole ( RoleId,UserId,IsLatestVersion)
+            VALUES ((SELECT Id FROM practica1.Roles WHERE RoleName = 'Tutor'),@UserId,0);
+
+
+            DECLARE @tutorId INT,@uniquecode NVARCHAR(max);
+            SELECT @tutorId = SCOPE_IDENTITY();
+            SET @uniquecode= CAST(NEWID() AS NVARCHAR(36))
+            -- Crear perfil de tutor
+            INSERT INTO practica1.TutorProfile (UserId,TutorCode)
+            VALUES (@UserId,@uniquecode);
+
+            -- Asignar curso al tutor
+            INSERT INTO practica1.CourseTutor (TutorId, CourseCodCourse)
+            VALUES (@UserId, @CodCourse);
+
+            -- Enviar notificación al usuario
+            INSERT INTO practica1.Notification (UserId, Message, Date)
+            VALUES (@UserId, 'Usted ha sido promovido a tutor exitosamente.',GETDATE());
+
+            -- Registrar en HistoryLog
+            -- INSERT INTO HistoryLog (Description)
+            -- VALUES ('Usuario cambiado a rol de tutor exitosamente.');
+
+            COMMIT TRANSACTION;
+        END TRY
+        BEGIN CATCH
+            ROLLBACK TRANSACTION;
+            INSERT INTO practica1.HistoryLog(Description,[Date])
+            VALUES ('Error al cambiar de rol.',GETDATE());
+            THROW;
+        END CATCH
+END;
+GO
+
+
+--- ***********************
+--  *  Procedimiento PR3  *
+--  ***********************
+
+
+--- ***********************
+--  *  Procedimiento PR4  *
+--  ***********************
+
+
+--- ***********************
+--  *  Procedimiento PR5  *
+--  ***********************
+
+
+--- ***********************
+--  *  Procedimiento PR6  *
+--  ***********************
 ------------
 CREATE PROCEDURE PR4
     @RoleName NVARCHAR(MAX)
@@ -90,7 +184,7 @@ BEGIN
             RETURN;
         END
 
-        IF @RoleName LIKE '%[^A-Za-z]%'
+        IF PATINDEX('%[^A-Za-z ]%',@RoleName)>0 
             BEGIN
                 RAISERROR ('El RoleName solo pueden contener letras.', 16, 1);
                 RETURN;
@@ -115,4 +209,7 @@ GO
 EXEC PR4 @RoleName = 'Student';
 EXEC PR4 @RoleName = 'Tutor';
 
-EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luis@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
+EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
+
+-- asignacionde tutor
+EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica

@@ -29,6 +29,32 @@ BEGIN
 END;
 GO
 
+CREATE TRIGGER Trigger1 
+ON practica1.UsuarioRole
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id=UserId FROM INSERTED
+            SET @sms='Se ha modificado el rol del usuario con id: '+CAST(@id AS NVARCHAR(36));              
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT  @id=UserId FROM INSERTED
+            SET @sms='Se creado un nuevo rol al usuario con id: '+CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT  @id=UserId FROM DELETED
+            SET @sms='Se eliminada un rol al usuario con id: '+CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
 
 
 
