@@ -1,4 +1,5 @@
 USE BD2;
+GO
 
 --- ***********************
 --  *  Procedimiento PR1  *
@@ -83,7 +84,6 @@ GO
 --  *  Procedimiento PR2  *
 --  ***********************
 
-
 CREATE PROCEDURE PR2
     @Email NVARCHAR(max),
     @CodCourse INT
@@ -149,7 +149,6 @@ BEGIN
         END CATCH
 END;
 GO
-
 
 --- ***********************
 --  *  Procedimiento PR3  *
@@ -228,16 +227,6 @@ GO
 --  *  Procedimiento PR4  *
 --  ***********************
 
-
---- ***********************
---  *  Procedimiento PR5  *
---  ***********************
-
-
---- ***********************
---  *  Procedimiento PR6  *
---  ***********************
-------------
 CREATE PROCEDURE PR4
     @RoleName NVARCHAR(MAX)
 AS
@@ -274,8 +263,9 @@ BEGIN
 END;
 GO
 
-EXEC PR4 @RoleName = 'Student';
-EXEC PR4 @RoleName = 'Tutor';
+--- ***********************
+--  *  Procedimiento PR5  *
+--  ***********************
 
 -- CREAR USUARIOS
 EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
