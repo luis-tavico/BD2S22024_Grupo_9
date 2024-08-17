@@ -157,14 +157,14 @@ GO
 
 CREATE PROCEDURE PR3
     @Email NVARCHAR(100),
-    @CodeCourse INT
+    @CodCourse INT
 AS
 BEGIN
     BEGIN TRANSACTION;
 
         BEGIN TRY
         
-            IF @Email = '' OR @CodeCourse IS NULL
+            IF @Email = '' OR @CodCourse IS NULL
                 BEGIN
                     RAISERROR ('Todos los campos son obligatorios.', 16, 1);
                 END    
@@ -176,7 +176,7 @@ BEGIN
                     RETURN;
                 END
 
-            IF ISNUMERIC(@CodeCourse)=0
+            IF ISNUMERIC(@CodCourse)=0
                 BEGIN
                     RAISERROR ('El codigo del curso tiene que ser de tipo numerico.', 16, 1);
                 END 
@@ -187,41 +187,38 @@ BEGIN
             INNER JOIN practica1.ProfileStudent as PS ON PS.UserId= U.Id
             WHERE U.Email=@Email;
 
-            SELECT @CreditsCurs=CreditsRequired FROM practica1.Course  WHERE CodCourse=@CodeCourse;
+            SELECT @CreditsCurs=CreditsRequired FROM practica1.Course C WHERE C.CodCourse=@CodCourse;
 
             IF @UserId IS NULL
                 BEGIN
                     THROW 50000, 'Usuario no econtrado o creditos insuficientes.', 1;
                 END
 
-            IF @CreditsCurs<@Credits
+            IF @CreditsCurs < @Credits
                 BEGIN
                     RAISERROR ('No tienes los suficientes creditos para asignarte.', 16, 1);
                     RETURN
                 END             
 
             -- Asignar curso
-            INSERT INTO CourseAssignment (UserId, CourseId)
+            INSERT INTO practica1.CourseAssignment (StudentId, CourseCodCourse)
             VALUES (@UserId, @CodCourse);
+            PRINT @UserId
 
             -- Enviar notificación al estudiante
-            INSERT INTO Notification (UserId, Message)
-            VALUES (@UserId, 'Usted ha sido asignado a un nuevo curso exitosamente.');
+            INSERT INTO practica1.Notification (UserId, Message,Date)
+            VALUES (@UserId, 'Usted ha sido asignado a un nuevo curso exitosamente.',GETDATE());
 
             -- Enviar notificación al tutor
-            INSERT INTO Notification (UserId, Message)
-            VALUES ((SELECT UserId FROM TutorProfile INNER JOIN CourseTutor ON TutorProfile.Id = CourseTutor.TutorId WHERE CourseTutor.CourseId = @CodCourse), 'Un nuevo estudiante ha sido asignado a su curso.');
-
-            -- Registrar en HistoryLog
-            INSERT INTO HistoryLog (Description)
-            VALUES ('Curso asignado exitosamente.');
+            --INSERT INTO practica1.Notification (UserId, Message,Date)
+           -- VALUES ((SELECT TutorCode FROM practica1.TutorProfile T INNER JOIN practica1.CourseTutor C ON T.TutorCode= CAST(C.TutorId AS NVARCHAR(36)) WHERE C.CourseCodCourse = @CodCourse), 'Un nuevo estudiante ha sido asignado a su curso.',GETDATE());
 
             COMMIT TRANSACTION;
         END TRY
         BEGIN CATCH
             ROLLBACK TRANSACTION;
-            INSERT INTO HistoryLog (Description)
-            VALUES ('Error al asignar curso.');
+            INSERT INTO practica1.HistoryLog (Description,Date)
+            VALUES ('Error al asignar curso.',GETDATE());
             THROW;
         END CATCH
 END;
@@ -280,7 +277,13 @@ GO
 EXEC PR4 @RoleName = 'Student';
 EXEC PR4 @RoleName = 'Tutor';
 
+-- CREAR USUARIOS
 EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
-
+EXEC PR1 @FirstName = 'Maria', @LastName = 'Lopez', @Email = 'maria@example.com', @DateOfBirth = '1992-05-15', @Password = 'password456', @Credits = 20;
+EXEC PR1 @FirstName = 'Sofia', @LastName = 'Morales', @Email = 'anonimo@example.com', @DateOfBirth = '1995-09-23', @Password = 'password000', @Credits = 15;
 -- asignacionde tutor
 EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
+
+-- Asignar cursos a estudiantes
+EXEC PR3 @Email = 'maria@example.com', @CodCourse = 970; 
+EXEC PR3 @Email = 'anonimo@example.com', @CodCourse = 970; 
