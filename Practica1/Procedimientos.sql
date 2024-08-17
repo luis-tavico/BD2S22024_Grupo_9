@@ -83,7 +83,6 @@ GO
 --  *  Procedimiento PR2  *
 --  ***********************
 
-
 CREATE PROCEDURE PR2
     @Email NVARCHAR(max),
     @CodCourse INT
@@ -149,7 +148,6 @@ BEGIN
         END CATCH
 END;
 GO
-
 
 --- ***********************
 --  *  Procedimiento PR3  *
@@ -231,33 +229,6 @@ GO
 --  *  Procedimiento PR4  *
 --  ***********************
 
-
---- ***********************
---  *  Procedimiento PR5  *
---  ***********************
-
-CREATE PROCEDURE PR5
-	@CodCourse INT,
-	@Name NVARCHAR(100),
-	@CreditsRequired INT
-AS
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM practica1.Course WHERE CodCourse = @CodCourse)
-    BEGIN
-        INSERT INTO practica1.Course (CodCourse, Name, CreditsRequired)
-        VALUES (@CodCourse, @Name, @CreditsRequired);
-    END
-    ELSE
-    BEGIN
-		RAISERROR ('El curso ya existe.', 16, 1);
-    END
-END;
-GO
-
---- ***********************
---  *  Procedimiento PR6  *
---  ***********************
-------------
 CREATE PROCEDURE PR4
     @RoleName NVARCHAR(MAX)
 AS
@@ -294,6 +265,34 @@ BEGIN
 END;
 GO
 
+--- ***********************
+--  *  Procedimiento PR5  *
+--  ***********************
+
+CREATE PROCEDURE PR5
+	@CodCourse INT,
+	@Name NVARCHAR(100),
+	@CreditsRequired INT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM practica1.Course WHERE CodCourse = @CodCourse)
+    BEGIN
+        INSERT INTO practica1.Course (CodCourse, Name, CreditsRequired)
+        VALUES (@CodCourse, @Name, @CreditsRequired);
+    END
+    ELSE
+    BEGIN
+		RAISERROR ('El curso ya existe.', 16, 1);
+    END
+END;
+GO
+
+--- ***********************
+--  *  Procedimiento PR6  *
+--  ***********************
+------------
+
+
 EXEC PR4 @RoleName = 'Student';
 EXEC PR4 @RoleName = 'Tutor';
 
@@ -301,3 +300,7 @@ EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com',
 
 -- asignacionde tutor
 EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
+
+-- agregar curso
+EXEC PR5 @CodCourse = 010,  @Name = 'Matematica Basica 1', @CreditsRequired = 3;
+GO
