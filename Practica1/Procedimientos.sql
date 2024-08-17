@@ -1,4 +1,5 @@
 USE BD2;
+GO
 
 --- ***********************
 --  *  Procedimiento PR1  *
@@ -155,14 +156,14 @@ GO
 
 CREATE PROCEDURE PR3
     @Email NVARCHAR(100),
-    @CodeCourse INT
+    @CodCourse INT
 AS
 BEGIN
     BEGIN TRANSACTION;
 
         BEGIN TRY
         
-            IF @Email = '' OR @CodeCourse IS NULL
+            IF @Email = '' OR @CodCourse IS NULL
                 BEGIN
                     RAISERROR ('Todos los campos son obligatorios.', 16, 1);
                 END    
@@ -174,7 +175,7 @@ BEGIN
                     RETURN;
                 END
 
-            IF ISNUMERIC(@CodeCourse)=0
+            IF ISNUMERIC(@CodCourse)=0
                 BEGIN
                     RAISERROR ('El codigo del curso tiene que ser de tipo numerico.', 16, 1);
                 END 
@@ -185,7 +186,7 @@ BEGIN
             INNER JOIN practica1.ProfileStudent as PS ON PS.UserId= U.Id
             WHERE U.Email=@Email;
 
-            SELECT @CreditsCurs=CreditsRequired FROM practica1.Course  WHERE CodCourse=@CodeCourse;
+            SELECT @CreditsCurs=CreditsRequired FROM practica1.Course  WHERE CodCourse=@CodCourse;
 
             IF @UserId IS NULL
                 BEGIN
@@ -292,14 +293,17 @@ GO
 --  ***********************
 ------------
 
-
-EXEC PR4 @RoleName = 'Student';
-EXEC PR4 @RoleName = 'Tutor';
+--EXEC PR4 @RoleName = 'Student';
+--GO
+--EXEC PR4 @RoleName = 'Tutor';
+--GO
 
 EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
+GO
 
 -- asignacionde tutor
 EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
+GO
 
 -- agregar curso
 EXEC PR5 @CodCourse = 010,  @Name = 'Matematica Basica 1', @CreditsRequired = 3;
