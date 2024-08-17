@@ -271,6 +271,24 @@ GO
 --  *  Procedimiento PR5  *
 --  ***********************
 
+CREATE PROCEDURE PR5
+	@CodCourse INT,
+	@Name NVARCHAR(100),
+	@CreditsRequired INT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM practica1.Course WHERE CodCourse = @CodCourse)
+    BEGIN
+        INSERT INTO practica1.Course (CodCourse, Name, CreditsRequired)
+        VALUES (@CodCourse, @Name, @CreditsRequired);
+    END
+    ELSE
+    BEGIN
+		RAISERROR ('El curso ya existe.', 16, 1);
+    END
+END;
+GO
+
 -- CREAR USUARIOS
 EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luis@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
 EXEC PR1 @FirstName = 'Maria', @LastName = 'Lopez', @Email = 'maria@example.com', @DateOfBirth = '1992-05-15', @Password = 'password456', @Credits = 20;
