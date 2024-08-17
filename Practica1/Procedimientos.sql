@@ -272,11 +272,11 @@ GO
 --  ***********************
 
 -- CREAR USUARIOS
-EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luisa@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
+EXEC PR1 @FirstName = 'Luis', @LastName = 'Perez', @Email = 'luis@example.com', @DateOfBirth = '1990-01-01', @Password = 'password123', @Credits = 10;
 EXEC PR1 @FirstName = 'Maria', @LastName = 'Lopez', @Email = 'maria@example.com', @DateOfBirth = '1992-05-15', @Password = 'password456', @Credits = 20;
 EXEC PR1 @FirstName = 'Sofia', @LastName = 'Morales', @Email = 'anonimo@example.com', @DateOfBirth = '1995-09-23', @Password = 'password000', @Credits = 15;
 -- asignacionde tutor
-EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
+EXEC PR2 @Email = 'luis@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
 EXEC PR2 @Email = 'anonimo@example.com', @CodCourse = 970;
 
 -- Asignar cursos a estudiantes
