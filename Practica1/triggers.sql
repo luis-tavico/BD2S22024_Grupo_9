@@ -1,14 +1,17 @@
 USE BD2;
 
+--- *********************************
+--  *  TRIGGER PARA TABLA USUARIOS  *
+--  *********************************
+
 CREATE TRIGGER Trigger1 
 ON practica1.Usuarios
 AFTER INSERT,UPDATE,DELETE
 AS
 BEGIN
     SET NOCOUNT ON
-    DECLARE @procedureName VARCHAR(75),@sms VARCHAR(MAX), @id uniqueidentifier;
-    SET @procedureName =OBJECT_NAME(@@PROCID); 
-    PRINT @procedureName 
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+
     IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
         BEGIN
             SELECT @id=Id FROM INSERTED
@@ -28,6 +31,10 @@ BEGIN
     INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
 END;
 GO
+
+--- *************************************
+--  *  TRIGGER PARA TABLA USUARIOSROLE  *
+--  *************************************
 
 CREATE TRIGGER Trigger2 
 ON practica1.UsuarioRole
@@ -56,6 +63,10 @@ BEGIN
 END;
 GO
 
+--- ***************************************
+--  *  TRIGGER PARA TABLA PROFILESTUDENT  *
+--  ***************************************
+
 CREATE TRIGGER Trigger3 
 ON practica1.ProfileStudent
 AFTER INSERT,UPDATE,DELETE
@@ -83,7 +94,229 @@ BEGIN
 END;
 GO
 
+--- *******************************
+--  *  TRIGGER PARA TABLA COURSE  *
+--  *******************************
 
+CREATE TRIGGER Trigger4
+ON practica1.Course
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @sms VARCHAR(MAX), @id INT;
+
+	IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+		BEGIN
+			SELECT @id = CodCourse FROM INSERTED;
+			SET @sms = 'Se ha modificado el curso con código; ' + CAST(@id AS NVARCHAR(36));
+		END
+	ELSE IF EXISTS(SELECT * FROM INSERTED)
+		BEGIN
+			SELECT @id = CodCourse FROM INSERTED;
+			SET @sms = 'Se ha creado un nuevo curso con código: ' + CAST(@id AS NVARCHAR(36));
+		END
+	ELSE IF EXISTS(SELECT * FROM DELETED)
+		BEGIN
+			SELECT @id = CodCourse FROM DELETED;
+			SET @sms = 'Se ha eliminado el curso con código: ' + CAST(@id AS NVARCHAR(36));
+		END
+
+	INSERT INTO practica1.HistoryLog(Date, Description) VALUES (GETDATE(), @sms);
+END;
+GO
+
+--- *****************************************
+--  *  TRIGGER PARA TABLA COURSEASSIGNMENT  *
+--  *****************************************
+
+CREATE TRIGGER Trigger5 
+ON practica1.CourseAssignment
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id INT;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha modificado la asignación de curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha creado una nueva asignación de curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM DELETED;
+            SET @sms = 'Se ha eliminado la asignación de curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+--- ************************************
+--  *  TRIGGER PARA TABLA COURSETUTOR  *
+--  ************************************
+
+CREATE TRIGGER Trigger6 
+ON practica1.CourseTutor
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id INT;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = CourseCodCourse FROM INSERTED;
+            SET @sms = 'Se ha modificado el tutor del curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = CourseCodCourse FROM INSERTED;
+            SET @sms = 'Se ha asignado un nuevo tutor al curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = CourseCodCourse FROM DELETED;
+            SET @sms = 'Se ha eliminado el tutor del curso con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+--- *************************************
+--  *  TRIGGER PARA TABLA NOTIFICACION  *
+--  *************************************
+
+CREATE TRIGGER Trigger7 
+ON practica1.Notification
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id UNIQUEIDENTIFIER;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = UserId FROM INSERTED;
+            SET @sms = 'Se ha modificado la notificación hacia el usuario con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = UserId FROM INSERTED;
+            SET @sms = 'Se ha creado una nueva notificación hacia el usuario con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = UserId FROM DELETED;
+            SET @sms = 'Se ha eliminado la notificación hacia el usuario con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+--- ****************************
+--  *  TRIGGER PARA TABLA TFA  *
+--  ****************************
+
+CREATE TRIGGER Trigger8 
+ON practica1.TFA
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id INT;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha modificado el estado de TFA con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha activado TFA con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM DELETED;
+            SET @sms = 'Se ha desactivado TFA con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+--- ******************************
+--  *  TRIGGER PARA TABLA ROLES  *
+--  ******************************
+
+CREATE TRIGGER Trigger9 
+ON practica1.Roles
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha modificado el rol con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = Id FROM INSERTED;
+            SET @sms = 'Se ha creado un nuevo rol con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = Id FROM DELETED;
+            SET @sms = 'Se ha eliminado el rol con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
+
+--- *************************************
+--  *  TRIGGER PARA TABLA TUTORPROFILE  *
+--  *************************************
+
+CREATE TRIGGER Trigger10 
+ON practica1.TutorProfile
+AFTER INSERT,UPDATE,DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @sms VARCHAR(MAX), @id uniqueidentifier;
+    
+    IF EXISTS(SELECT * FROM INSERTED) AND EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = UserId FROM INSERTED;
+            SET @sms = 'Se ha modificado el perfil del tutor con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM INSERTED)
+        BEGIN
+            SELECT @id = UserId FROM INSERTED;
+            SET @sms = 'Se ha creado un nuevo perfil de tutor con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    ELSE IF EXISTS(SELECT * FROM DELETED)
+        BEGIN
+            SELECT @id = UserId FROM DELETED;
+            SET @sms = 'Se ha eliminado el perfil del tutor con ID: ' + CAST(@id AS NVARCHAR(36));
+        END
+    
+    INSERT INTO practica1.HistoryLog(Date,Description) VALUES(GETDATE(),@sms);
+END;
+GO
 
 
 
