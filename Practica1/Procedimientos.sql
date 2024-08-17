@@ -236,6 +236,23 @@ GO
 --  *  Procedimiento PR5  *
 --  ***********************
 
+CREATE PROCEDURE PR5
+	@CodCourse INT,
+	@Name NVARCHAR(100),
+	@CreditsRequired INT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM practica1.Course WHERE CodCourse = @CodCourse)
+    BEGIN
+        INSERT INTO practica1.Course (CodCourse, Name, CreditsRequired)
+        VALUES (@CodCourse, @Name, @CreditsRequired);
+    END
+    ELSE
+    BEGIN
+		RAISERROR ('El curso ya existe.', 16, 1);
+    END
+END;
+GO
 
 --- ***********************
 --  *  Procedimiento PR6  *
