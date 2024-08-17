@@ -155,6 +155,77 @@ GO
 --  *  Procedimiento PR3  *
 --  ***********************
 
+CREATE PROCEDURE PR3
+    @Email NVARCHAR(100),
+    @CodeCourse INT
+AS
+BEGIN
+    BEGIN TRANSACTION;
+
+        BEGIN TRY
+        
+            IF @Email = '' OR @CodeCourse IS NULL
+                BEGIN
+                    RAISERROR ('Todos los campos son obligatorios.', 16, 1);
+                END    
+
+            IF @Email NOT LIKE '_%@__%.__%'
+            --'%_@__%.__%'
+                BEGIN
+                    RAISERROR ('El formato del correo electrónico no es válido.', 16, 1);
+                    RETURN;
+                END
+
+            IF ISNUMERIC(@CodeCourse)=0
+                BEGIN
+                    RAISERROR ('El codigo del curso tiene que ser de tipo numerico.', 16, 1);
+                END 
+
+            DECLARE @UserId UNIQUEIDENTIFIER, @Credits INT, @CreditsCurs INT;
+            
+            SELECT @UserId=U.Id,@Credits=PS.Credits FROM practica1.Usuarios as U
+            INNER JOIN practica1.ProfileStudent as PS ON PS.UserId= U.Id
+            WHERE U.Email=@Email;
+
+            SELECT @CreditsCurs=CreditsRequired FROM practica1.Course  WHERE CodCourse=@CodeCourse;
+
+            IF @UserId IS NULL
+                BEGIN
+                    THROW 50000, 'Usuario no econtrado o creditos insuficientes.', 1;
+                END
+
+            IF @CreditsCurs<@Credits
+                BEGIN
+                    RAISERROR ('No tienes los suficientes creditos para asignarte.', 16, 1);
+                    RETURN
+                END             
+
+            -- Asignar curso
+            INSERT INTO CourseAssignment (UserId, CourseId)
+            VALUES (@UserId, @CodCourse);
+
+            -- Enviar notificación al estudiante
+            INSERT INTO Notification (UserId, Message)
+            VALUES (@UserId, 'Usted ha sido asignado a un nuevo curso exitosamente.');
+
+            -- Enviar notificación al tutor
+            INSERT INTO Notification (UserId, Message)
+            VALUES ((SELECT UserId FROM TutorProfile INNER JOIN CourseTutor ON TutorProfile.Id = CourseTutor.TutorId WHERE CourseTutor.CourseId = @CodCourse), 'Un nuevo estudiante ha sido asignado a su curso.');
+
+            -- Registrar en HistoryLog
+            INSERT INTO HistoryLog (Description)
+            VALUES ('Curso asignado exitosamente.');
+
+            COMMIT TRANSACTION;
+        END TRY
+        BEGIN CATCH
+            ROLLBACK TRANSACTION;
+            INSERT INTO HistoryLog (Description)
+            VALUES ('Error al asignar curso.');
+            THROW;
+        END CATCH
+END;
+GO
 
 --- ***********************
 --  *  Procedimiento PR4  *
