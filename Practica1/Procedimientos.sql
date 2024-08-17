@@ -209,8 +209,12 @@ BEGIN
             VALUES (@UserId, 'Usted ha sido asignado a un nuevo curso exitosamente.',GETDATE());
 
             -- Enviar notificación al tutor
-            --INSERT INTO practica1.Notification (UserId, Message,Date)
-           -- VALUES ((SELECT TutorCode FROM practica1.TutorProfile T INNER JOIN practica1.CourseTutor C ON T.TutorCode= CAST(C.TutorId AS NVARCHAR(36)) WHERE C.CourseCodCourse = @CodCourse), 'Un nuevo estudiante ha sido asignado a su curso.',GETDATE());
+            
+            INSERT INTO practica1.Notification (UserId, Message,Date)
+           VALUES (
+            (SELECT TOP 1 C.TutorId FROM practica1.TutorProfile T INNER JOIN practica1.CourseTutor C ON T.UserId = C.TutorId 
+            WHERE C.CourseCodCourse = @CodCourse  AND TRY_CAST(T.TutorCode AS UNIQUEIDENTIFIER) IS NOT NULL), 
+            'Un nuevo estudiante ha sido asignado a su curso.',GETDATE());
 
             COMMIT TRANSACTION;
         END TRY
@@ -273,6 +277,7 @@ EXEC PR1 @FirstName = 'Maria', @LastName = 'Lopez', @Email = 'maria@example.com'
 EXEC PR1 @FirstName = 'Sofia', @LastName = 'Morales', @Email = 'anonimo@example.com', @DateOfBirth = '1995-09-23', @Password = 'password000', @Credits = 15;
 -- asignacionde tutor
 EXEC PR2 @Email = 'luisa@example.com', @CodCourse = 970; -- Carlos como tutor de Matematica
+EXEC PR2 @Email = 'anonimo@example.com', @CodCourse = 970;
 
 -- Asignar cursos a estudiantes
 EXEC PR3 @Email = 'maria@example.com', @CodCourse = 970; 
