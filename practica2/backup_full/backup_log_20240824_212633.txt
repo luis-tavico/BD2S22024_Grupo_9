@@ -1,4 +1,0 @@
-Inicio del backup full: sáb 24 ago 2024 21:26:33 CST
-Fin del backup full: sáb 24 ago 2024 21:26:39 CST
-Inicio del backup incremental: sáb 24 ago 2024 21:26:39 CST
-fin del backup incremental: sáb 24 ago 2024 21:26:39 CST
