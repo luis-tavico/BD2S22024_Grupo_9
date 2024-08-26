@@ -1,0 +1,14 @@
+***************************************************
+*			Backup                    *
+***************************************************
+
+@echo off
+echo %date% %time%
+mysqldump.exe -u root -p practica2 > C:\Users\gerso\Documents\Abisai\USAC\backup_dia2_completo.sql
+echo %date% %time%
+
+
+@echo off
+echo %date% %time%
+mysqldump.exe -u root -p practica2 HABITACION PACIENTE > C:\Users\gerso\Documents\Abisai\USAC\backup_dia2_incremental.sql
+echo %date% %time%
