@@ -1,0 +1,21 @@
+***************************************************
+*			Backup                    *
+***************************************************
+ingresar a esta dirrecion
+cd /home/alexcham23/Documentos/DB2/BD2S22024_Grupo_9/practica2/backup_full/
+echo $(date)
+mysqldump -u root -p practica2 > backup_dia1_completo.sql
+echo $(date)
+
+ingresar : cd /home/alexcham23/Documentos/DB2/BD2S22024_Grupo_9/practica2/backup_incremental/
+
+echo $(date)
+mysqldump -u root -p practica2 HABITACION > backup_dia1_incremental.sql
+echo $(date)
+
+
+***************************************************
+*			Restore                   *
+***************************************************
+mysql -u root -p practica2 < backup_dia1_completo.sql
+
