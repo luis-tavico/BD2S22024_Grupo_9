@@ -13,14 +13,14 @@ CREATE TABLE PACIENTE (
 );
 
 CREATE TABLE LOG_ACTIVIDAD (
-    id_log_actividad INT PRIMARY KEY NOT NULL,
+    id_log_actividad INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     timestampx VARCHAR(100),
-    activadad VARCHAR(500),
+    actividad VARCHAR(500),
     PACIENTE_idPaciente INT NOT NULL,
     HABITACION_idHabitacion INT NOT NULL,
     FOREIGN KEY (PACIENTE_idPaciente) REFERENCES PACIENTE(idPaciente),
     FOREIGN KEY (HABITACION_idHabitacion) REFERENCES HABITACION(idHabitacion)
-    );
+);
     
 CREATE TABLE LOG_HABITACION(
 	timestampx VARCHAR(100) PRIMARY KEY NOT NULL,
