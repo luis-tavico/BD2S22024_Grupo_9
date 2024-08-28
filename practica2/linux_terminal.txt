@@ -19,3 +19,15 @@ echo $(date)
 ***************************************************
 mysql -u root -p practica2 < backup_dia1_completo.sql
 
+
+
+mysql -u root -p practica2 < backup_dia3_completo.sql
+
+echo $(date)
+mysqldump -u root -p practica2 > backup_dia4_completo.sql
+echo $(date)
+
+
+echo $(date)
+mysqldump -u root -p practica2 HABITACION PACIENTE LOG_ACTIVIDAD > backup_dia4_incremental.sql
+echo $(date)
