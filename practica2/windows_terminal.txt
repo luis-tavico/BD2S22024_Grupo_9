@@ -4,15 +4,14 @@
 
 @echo off
 echo %date% %time%
-mysqldump.exe -u root -p practica2 > C:\Users\gerso\Documents\Abisai\USAC\backup_dia2_completo.sql
+mysqldump -u root -p practica2 > "C:\Users\LUIS T\Desktop\Respaldo\backup_dia5_completo.sql"
 echo %date% %time%
 
 
 @echo off
 echo %date% %time%
-mysqldump.exe -u root -p practica2 HABITACION PACIENTE > C:\Users\gerso\Documents\Abisai\USAC\backup_dia2_incremental.sql
+mysqldump -u root -p practica2 HABITACION PACIENTE LOG_ACTIVIDAD LOG_HABITACION > "C:\Users\LUIS T\Desktop\Respaldo\backup_dia5_incremental.sql"
 echo %date% %time%
-
 
 
 ***************************************************
