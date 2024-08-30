@@ -20,11 +20,29 @@ echo %date% %time%
 
 @echo off
 echo %date% %time%
-mysql.exe -u root -p practica2 < "C:\Users\Randall\Documents\U\Bases2\Lab\BD2S22024_Grupo_9\practica2\backup_full\backup_dia3_completo.sql"
+mysql -u root -p practica2 < "C:\Users\gerso\Documents\Abisai\USAC\Sistema de bases de datos 2\Laboratorio\BD2S22024_Grupo_9\practica2\backup_full\backup_dia1_completo.sql"
 echo %date% %time%
 
 
 @echo off
 echo %date% %time%
 mysqldump.exe -u root -p practica2 HABITACION PACIENTE > C:\Users\gerso\Documents\Abisai\USAC\backup_dia2_incremental.sql
+echo %date% %time%
+
+*******************************************************************
+# BORRAR Y CREAR LA BASE DE DATOS ANTES DE REALIZAR LA RESTAURACION
+*******************************************************************
+
+@echo off
+echo %date% %time%
+
+:: Conectar a MySQL y borrar la base de datos 'practica2'
+mysql -u root -pcronos -e "DROP DATABASE IF EXISTS practica2;"
+
+:: Conectar a MySQL y crear la base de datos 'practica2'
+mysql -u root -pcronos -e "CREATE DATABASE IF NOT EXISTS practica2;"
+
+:: Restaurar el backup en la base de datos 'practica2'
+mysql -u root -pcronos practica2 < "C:\Users\gerso\Documents\Abisai\USAC\Sistema de bases de datos 2\Laboratorio\BD2S22024_Grupo_9\practica2\backup_full\backup_dia1_completo.sql"
+
 echo %date% %time%
