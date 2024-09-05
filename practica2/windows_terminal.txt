@@ -46,3 +46,23 @@ mysql -u root -pcronos -e "CREATE DATABASE IF NOT EXISTS practica2;"
 mysql -u root -pcronos practica2 < "C:\Users\gerso\Documents\Abisai\USAC\Sistema de bases de datos 2\Laboratorio\BD2S22024_Grupo_9\practica2\backup_full\backup_dia5_completo.sql"
 
 echo %date% %time%
+
+
+*******************************************************************************
+# BORRAR Y CREAR LA BASE DE DATOS ANTES DE REALIZAR LA RESTAURACION INCREMENTAL
+*******************************************************************************
+
+@echo off
+echo %date% %time%
+
+:: Conectar a MySQL y borrar la base de datos 'practica2'
+mysql -u root -padmin123 -e "DROP DATABASE IF EXISTS practica2;"
+
+:: Conectar a MySQL y crear la base de datos 'practica2'
+mysql -u root -padmin123 -e "CREATE DATABASE IF NOT EXISTS practica2;"
+
+:: Restaurar el backup en la base de datos 'practica2'
+mysql -u root -padmin123 practica2 < "C:\Users\LUIS T\Desktop\BD2S22024_Grupo_9\practica2\backup_incremental\backup_dia2_incremental.sql"
+
+echo %date% %time%
+
