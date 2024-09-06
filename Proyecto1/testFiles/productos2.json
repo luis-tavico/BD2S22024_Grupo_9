@@ -1,0 +1,37 @@
+[
+  {
+    "nombre": "Manzanas Rojas",
+    "marca": "Granny Smith",
+    "fabricante": "Fruticola del Norte",
+    "precio_actual": 1.50,
+    "unidad_medida": "kilo"
+  },
+  {
+    "nombre": "Pan Integral",
+    "marca": "Bimbo",
+    "fabricante": "Bimbo",
+    "precio_actual": 2.25,
+    "unidad_medida": "pieza"
+  },
+  {
+    "nombre": "Leche de Almendras",
+    "marca": "Silk",
+    "fabricante": "Danone",
+    "precio_actual": 3.75,
+    "unidad_medida": "litro"
+  },
+  {
+    "nombre": "Arroz Basmati",
+    "marca": "Tilda",
+    "fabricante": "Tilda Foods",
+    "precio_actual": 4.50,
+    "unidad_medida": "kilo"
+  },
+  {
+    "nombre": "Atun en Lata",
+    "marca": "Calvo",
+    "fabricante": "Calvo",
+    "precio_actual": 1.99,
+    "unidad_medida": "lata"
+  }
+]

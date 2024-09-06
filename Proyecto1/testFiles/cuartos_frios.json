@@ -1,0 +1,22 @@
+[
+    {
+        "capacidad_m3": 100.00,
+        "temperatura": -5.00
+    },
+    {
+        "capacidad_m3": 120.00,
+        "temperatura": -8.00
+    },
+    {
+        "capacidad_m3": 80.00,
+        "temperatura": -3.00
+    },
+    {
+        "capacidad_m3": 60.00,
+        "temperatura": -8.00
+    },
+    {
+        "capacidad_m3": 82.00,
+        "temperatura": -1.00
+    }
+]

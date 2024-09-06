@@ -1,0 +1,51 @@
+[
+    {
+        "representante_legal": "Juan Perez",
+        "telefono": "502-5555-5555",
+        "direccion": "4ta Avenida 10-30, Zona 1, Ciudad de Guatemala",
+        "nombre_empresa": "Distribuidora Perez S.A.",
+        "tipo_empresa": "C"
+    },
+    {
+        "representante_legal": "Raul Contreras",
+        "telefono": "502-1234-5555",
+        "direccion": "2da Avenida 18-20, Zona 8, Ciudad de Guatemala",
+        "nombre_empresa": "Distribuidora New Food S.A.",
+        "tipo_empresa": "A"
+    },
+    {
+        "representante_legal": "Karla Godinez",
+        "telefono": "502-1234-7777",
+        "direccion": "5ta Avenida 11-26, Zona 10, Jutiapa",
+        "nombre_empresa": "Distribuidora La Esperanza S.A.",
+        "tipo_empresa": "B"
+    },
+    {
+        "representante_legal": "Maria Rodriguez",
+        "telefono": "502-4444-4444",
+        "direccion": "7ma Calle 5-25, Zona 9, Ciudad de Guatemala",
+        "nombre_empresa": "Importadora del Sur S.A.",
+        "tipo_empresa": "A"
+    },
+    {
+        "representante_legal": "Carlos Gomez",
+        "telefono": "502-3333-3333",
+        "direccion": "12 Calle 2-15, Zona 6, Villa Nueva",
+        "nombre_empresa": "Constructora Maya S.A.",
+        "tipo_empresa": "B"
+    },
+    {
+        "representante_legal": "Ana Lopez",
+        "telefono": "502-2222-2222",
+        "direccion": "20 Avenida 15-05, Zona 4, Mixco",
+        "nombre_empresa": "Servicios Integrados S.A.",
+        "tipo_empresa": "A"
+    },
+    {
+        "representante_legal": "Luis Martinez",
+        "telefono": "502-1111-1111",
+        "direccion": "5 Avenida 30-10, Zona 10, Ciudad de Guatemala",
+        "nombre_empresa": "Tecnologias Avanzadas S.A.",
+        "tipo_empresa": "B"
+    }
+]

@@ -1,0 +1,40 @@
+CREATE KEYSPACE ventas_sa WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};
+
+USE ventas_sa;
+
+CREATE TABLE cliente (
+    codigo_cliente UUID PRIMARY KEY,
+    representante_legal TEXT,
+    telefono TEXT,
+    direccion TEXT,
+    nombre_empresa TEXT,
+    tipo_empresa TEXT
+);
+
+CREATE TABLE bodega (
+    codigo_bodega UUID PRIMARY KEY,
+    capacidad_m3 DECIMAL
+);
+
+CREATE TABLE cuarto_frio (
+    codigo_cuarto_frio UUID PRIMARY KEY,
+    capacidad_m3 DECIMAL,
+    temperatura DECIMAL,
+    codigo_bodega UUID
+);
+
+CREATE TABLE producto (
+    codigo_producto UUID PRIMARY KEY,
+    nombre TEXT,
+    marca TEXT,
+    fabricante TEXT,
+    precio_actual DECIMAL,
+    codigo_bodega UUID
+);
+
+CREATE TABLE precio_historial (
+    codigo_precio_historial UUID PRIMARY KEY,
+    fecha TIMESTAMP,
+    precio DECIMAL,
+    codigo_producto UUID
+);

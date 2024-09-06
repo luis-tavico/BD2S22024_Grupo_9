@@ -1,0 +1,37 @@
+[
+  {
+    "nombre": "Cafe en Grano",
+    "marca": "Lavazza",
+    "fabricante": "Lavazza S.p.A.",
+    "precio_actual": 12.50,
+    "unidad_medida": "paquete"
+  },
+  {
+    "nombre": "Avena Instantanea",
+    "marca": "Quaker",
+    "fabricante": "PepsiCo",
+    "precio_actual": 3.20,
+    "unidad_medida": "caja"
+  },
+  {
+    "nombre": "Yogur Griego Natural",
+    "marca": "Fage",
+    "fabricante": "Fage International SA",
+    "precio_actual": 2.99,
+    "unidad_medida": "vaso"
+  },
+  {
+    "nombre": "Galletas de Chocolate",
+    "marca": "Oreo",
+    "fabricante": "Mondelez International",
+    "precio_actual": 2.50,
+    "unidad_medida": "paquete"
+  },
+  {
+    "nombre": "Te Verde",
+    "marca": "Twinings",
+    "fabricante": "Twinings",
+    "precio_actual": 4.80,
+    "unidad_medida": "caja"
+  }
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "nombre": "Refresco",
+        "marca": "Coca-Cola",
+        "fabricante": "Coca-Cola Company",
+        "precio_actual": 7.50
+    },
+    {
+        "nombre": "Galletas",
+        "marca": "Chiqui",
+        "fabricante": "Nestle",
+        "precio_actual": 1.25
+    },
+    {
+        "nombre": "Leche Descremada",
+        "marca": "Alpina",
+        "fabricante": "Alpina",
+        "precio_actual": 0.90
+    },
+    {
+        "nombre": "Cereal",
+        "marca": "Zucaritas",
+        "fabricante": "Kellogg's",
+        "precio_actual": 3.75
+    },
+    {
+        "nombre": "Jugo de Naranja",
+        "marca": "Del Valle",
+        "fabricante": "Coca-Cola Company",
+        "precio_actual": 1.80
+    },
+    {
+        "nombre": "Cafe Molido",
+        "marca": "Nescafe",
+        "fabricante": "Nestle",
+        "precio_actual": 8.20
+    }
+]
