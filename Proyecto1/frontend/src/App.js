@@ -7,13 +7,15 @@ import CuartosFrios from './components/cuartosfrios';
 import Productos from './components/productos';
 import PreciosHistorial from './components/precioshistorial';
 import ProductosEnBodega from './components/productoenbodega';
+import Compras from './components/compras';
 import Pedidos from './components/pedidos';
+import Pedido from './components/pedido';
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light mb-3">
           <div className="container-fluid">
             <Link className="navbar-brand" to="/">Ventas S.A.</Link>
             <button
@@ -45,7 +47,6 @@ function App() {
             </div>
           </div>
         </nav>
-        <br />
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/clientes" element={<Clientes />} />
@@ -54,7 +55,9 @@ function App() {
           <Route path="/productos" element={<Productos />} />
           <Route path="/productos/:codigo_bodega" element={<ProductosEnBodega />} />
           <Route path="/precioshistorial/:codigo_producto" element={<PreciosHistorial />} />
+          <Route path="/compras" element={<Compras />} />
           <Route path="/pedidos" element={<Pedidos />} />
+          <Route path="/pedidos/:codigo_pedido" element={<Pedido />} />
         </Routes>
       </Router>
     </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 import { capitalize } from 'lodash';
@@ -42,8 +44,8 @@ const Modal = ({ id, title, children, onSave, onClose, saveLabel = "Guardar", cl
 );
 
 function PreciosHistorial() {
-    
-    const {codigo_producto} = useParams();
+
+    const { codigo_producto } = useParams();
     const [precios, setPrecios] = useState([]);
     const [selectedPrecio, setSelectedPrecio] = useState(null);
     const [formData, setFormData] = useState({});
@@ -72,8 +74,11 @@ function PreciosHistorial() {
         const request = isEdit
             ? axios.put(`http://localhost:5000/precioshistorial/${selectedPrecio.codigo_precio_historial}`, form_data)
             : axios.post('http://localhost:5000/precioshistorial', form_data);
-
-        request.then(() => {
+        request.then((response) => {
+            toast.success(response.data.message, {
+                autoClose: 1500,
+                hideProgressBar: true,
+            });
             fetchPrecios();
             resetForm();
         }).catch(error => console.error('Error saving precio historial:', error));
@@ -93,7 +98,11 @@ function PreciosHistorial() {
 
     const handleDeleteConfirm = () => {
         axios.delete(`http://localhost:5000/precioshistorial/${precioAEliminar.codigo_precio_historial}`)
-            .then(() => {
+            .then((response) => {
+                toast.success(response.data.message, {
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                });
                 fetchPrecios();
                 setPrecioAEliminar(null);
             })
@@ -124,6 +133,10 @@ function PreciosHistorial() {
     return (
         <div className="container-precios">
             <div className="row">
+                <div>
+                    <ToastContainer />
+                </div>
+
                 <h1 className="text-center">Historial de Precios</h1>
 
                 <div className="col-10 offset-1 mb-3">
@@ -136,11 +149,11 @@ function PreciosHistorial() {
                 </div>
 
                 <div className="col-10 offset-1">
-                    <table className="table table-hover">
+                    <table className="table table-hover text-center">
                         <thead className="table-light">
                             <tr>
                                 {['Codigo', 'Fecha', 'Precio', 'Acciones'].map((header) => (
-                                    <th className="text-center" key={header}>{header}</th>
+                                    <th key={header}>{header}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -148,9 +161,9 @@ function PreciosHistorial() {
                             {precios.map(precio => (
                                 <tr key={precio.codigo_precio_historial}>
                                     {['codigo_precio_historial', 'fecha', 'precio'].map((field, idx) => (
-                                        <td className="text-center" key={idx}>{precio[field]}</td>
+                                        <td key={idx}>{precio[field]}</td>
                                     ))}
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnEdit" onClick={() => handleEditClick(precio)} data-bs-toggle="modal" data-bs-target="#createModal">
                                             <FontAwesomeIcon icon={faPenToSquare} />
                                         </button>

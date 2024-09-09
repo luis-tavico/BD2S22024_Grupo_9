@@ -38,3 +38,18 @@ CREATE TABLE precio_historial (
     precio DECIMAL,
     codigo_producto UUID
 );
+
+CREATE TYPE pedido_detalle (
+    nombre_producto TEXT,
+    cantidad INT,
+    precio_unitario DECIMAL,
+    precio_total DECIMAL
+);
+
+CREATE TABLE pedido (
+    codigo_pedido UUID PRIMARY KEY,
+    fecha TIMESTAMP,
+    total DECIMAL,
+    codigo_cliente UUID,
+    detalles LIST<FROZEN<pedido_detalle>>,
+);

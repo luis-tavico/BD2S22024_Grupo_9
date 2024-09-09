@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { capitalize } from 'lodash';
@@ -69,8 +71,11 @@ function Productos() {
         const request = isEdit
             ? axios.put(`http://localhost:5000/productos/${selectedProducto.codigo_producto}`, formData)
             : axios.post('http://localhost:5000/productos', formData);
-
-        request.then(() => {
+        request.then((response) => {
+            toast.success(response.data.message, {
+                autoClose: 1500,
+                hideProgressBar: true,
+            });
             fetchProductos();
             resetForm();
         }).catch(error => console.error('Error saving producto:', error));
@@ -90,7 +95,11 @@ function Productos() {
 
     const handleDeleteConfirm = () => {
         axios.delete(`http://localhost:5000/productos/${productoAEliminar.codigo_producto}`)
-            .then(() => {
+            .then((response) => {
+                toast.success(response.data.message, {
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                });
                 fetchProductos();
                 setProductoAEliminar(null);
             })
@@ -118,6 +127,10 @@ function Productos() {
     return (
         <div className="container-productos">
             <div className="row">
+                <div>
+                    <ToastContainer />
+                </div>
+
                 <h1 className="text-center">Productos</h1>
 
                 <div className="col-10 offset-1 mb-3">
@@ -130,11 +143,11 @@ function Productos() {
                 </div>
 
                 <div className="col-10 offset-1">
-                    <table className="table table-hover">
+                    <table className="table table-hover text-center">
                         <thead className="table-light">
                             <tr>
                                 {['Codigo', 'Nombre', 'Marca', 'Fabricante', 'Precio actual', 'Historial de precios', 'Acciones'].map((header) => (
-                                    <th className="text-center" key={header}>{header}</th>
+                                    <th key={header}>{header}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -142,14 +155,14 @@ function Productos() {
                             {productos.map(producto => (
                                 <tr key={producto.codigo_producto}>
                                     {['codigo_producto', 'nombre', 'marca', 'fabricante', 'precio_actual'].map((field, idx) => (
-                                        <td className="text-center" key={idx}>{producto[field]}</td>
+                                        <td key={idx}>{producto[field]}</td>
                                     ))}
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnHistory" onClick={() => navigate(`/precioshistorial/${producto.codigo_producto}`)}>
                                             <FontAwesomeIcon icon={faEye} />
                                         </button>
                                     </td>
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnEdit" onClick={() => handleEditClick(producto)} data-bs-toggle="modal" data-bs-target="#createModal">
                                             <FontAwesomeIcon icon={faPenToSquare} />
                                         </button>

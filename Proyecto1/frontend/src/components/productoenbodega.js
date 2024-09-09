@@ -138,11 +138,11 @@ function ProductosEnBodega() {
                 </div>
 
                 <div className="col-10 offset-1">
-                    <table className="table table-hover">
+                    <table className="table table-hover text-center">
                         <thead className="table-light">
                             <tr>
                                 {['Codigo', 'Nombre', 'Marca', 'Fabricante', 'Precio actual', 'Historial de precios', 'Acciones'].map((header) => (
-                                    <th className="text-center" key={header}>{header}</th>
+                                    <th key={header}>{header}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -150,14 +150,14 @@ function ProductosEnBodega() {
                             {productos.map(producto => (
                                 <tr key={producto.codigo_producto}>
                                     {['codigo_producto', 'nombre', 'marca', 'fabricante', 'precio_actual'].map((field, idx) => (
-                                        <td className="text-center" key={idx}>{producto[field]}</td>
+                                        <td key={idx}>{producto[field]}</td>
                                     ))}
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnHistory" onClick={() => navigate(`/precioshistorial/${producto.codigo_producto}`)}>
                                             <FontAwesomeIcon icon={faEye} />
                                         </button>
                                     </td>
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnEdit" onClick={() => handleEditClick(producto)} data-bs-toggle="modal" data-bs-target="#createModal">
                                             <FontAwesomeIcon icon={faPenToSquare} />
                                         </button>

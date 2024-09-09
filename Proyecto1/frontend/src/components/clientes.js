@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { capitalize } from 'lodash';
 import axios from 'axios';
@@ -68,8 +70,11 @@ function Clientes() {
         const request = isEdit
             ? axios.put(`http://localhost:5000/clientes/${selectedCliente.codigo_cliente}`, formData)
             : axios.post('http://localhost:5000/clientes', formData);
-
-        request.then(() => {
+        request.then((response) => {
+            toast.success(response.data.message, {
+                autoClose: 1500,
+                hideProgressBar: true,
+            });
             fetchClientes();
             resetForm();
         }).catch(error => console.error('Error saving cliente:', error));
@@ -89,7 +94,11 @@ function Clientes() {
 
     const handleDeleteConfirm = () => {
         axios.delete(`http://localhost:5000/clientes/${clienteAEliminar.codigo_cliente}`)
-            .then(() => {
+            .then((response) => {
+                toast.success(response.data.message, {
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                });
                 fetchClientes();
                 setClienteAEliminar(null);
             })
@@ -117,6 +126,10 @@ function Clientes() {
     return (
         <div className="container-clients">
             <div className="row">
+                <div>
+                    <ToastContainer />
+                </div>
+
                 <h1 className="text-center">Clientes</h1>
 
                 <div className="col-10 offset-1 mb-3">
@@ -129,11 +142,11 @@ function Clientes() {
                 </div>
 
                 <div className="col-10 offset-1">
-                    <table className="table table-hover">
+                    <table className="table table-hover text-center">
                         <thead className="table-light">
                             <tr>
                                 {['Codigo', 'Representante legal', 'Telefono', 'Direccion', 'Nombre empresa', 'Tipo empresa', 'Acciones'].map((header) => (
-                                    <th className="text-center" key={header}>{header}</th>
+                                    <th key={header}>{header}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -141,9 +154,9 @@ function Clientes() {
                             {clientes.map(cliente => (
                                 <tr key={cliente.codigo_cliente}>
                                     {['codigo_cliente', 'representante_legal', 'telefono', 'direccion', 'nombre_empresa', 'tipo_empresa'].map((field, idx) => (
-                                        <td className="text-center" key={idx}>{cliente[field]}</td>
+                                        <td key={idx}>{cliente[field]}</td>
                                     ))}
-                                    <td className="text-center">
+                                    <td>
                                         <button type="button" className="btns btnEdit" onClick={() => handleEditClick(cliente)} data-bs-toggle="modal" data-bs-target="#createModal">
                                             <FontAwesomeIcon icon={faPenToSquare} />
                                         </button>
