@@ -7,7 +7,7 @@ import uuid
 app = Flask(__name__)
 CORS(app)
 
-cluster = Cluster(['172.17.0.2'])
+cluster = Cluster(['localhost'], port=9042)
 session = cluster.connect('ventas_sa')
 
 def str_to_uuid(val):
@@ -276,7 +276,15 @@ def actualizar_producto(codigo_producto):
     marca = data['marca']
     fabricante = data['fabricante']
     precio_actual = round(float(data['precio_actual']), 2)
+    precio_anterior = round(float(data['precio_anterior']), 2)
+    fecha = data['fecha']
+
+    # Actualizar el historial de precios
+    query1 = "INSERT INTO precio_historial (codigo_precio_historial, fecha, precio, codigo_producto) "
+    query1 += "VALUES (uuid(), '" + fecha + "', " + str(precio_anterior) + ", " + codigo_producto + ")"
+    session.execute(query1)
     
+    # Actualizar el producto
     query = """
     UPDATE producto SET nombre=%s, marca=%s, fabricante=%s, precio_actual=%s 
     WHERE codigo_producto=%s

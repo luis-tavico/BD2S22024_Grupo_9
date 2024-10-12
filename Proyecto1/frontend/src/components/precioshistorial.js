@@ -140,12 +140,12 @@ function PreciosHistorial() {
                 <h1 className="text-center">Historial de Precios</h1>
 
                 <div className="col-10 offset-1 mb-3">
-                    <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">Crear</button>
+                    {/* <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">Crear</button>
                     {' '}
                     <label className="btn btn-primary">
                         Cargar
                         <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleFileUpload} />
-                    </label>
+                    </label> */}
                 </div>
 
                 <div className="col-10 offset-1">
