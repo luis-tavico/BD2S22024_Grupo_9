@@ -1,0 +1,15 @@
+.btns {
+    border: none;
+    color: #fff;
+    border-radius: 3px;
+    box-shadow: 2px 2px 5px #888;
+}
+
+.btnEdit {
+    background-color: #54B4D3;
+    color: #332D2D;
+}
+
+.btnDelete {
+    background-color: #C0392B;
+}

@@ -71,27 +71,59 @@ app.post('/autores', async (req, res) => {
 // ==================================== Leer, Filtrar ====================================
 app.get('/autores', async (req, res) => {
     try {
-        const { nacionalidad } = req.query;
+        const { nacionalidades, nacionalidad, n } = req.query;
         let autores;
-        const query = {};
-        // Por una nacionalidad especifica, Uso: GET http://localhost:3000/autores?nacionalidad=Mexican
+        // Por mas de una nacionalidad, Uso: GET http://localhost:5000/autores?nacionalidades=true
+        if (nacionalidades == "true") {
+            autores = await Autor.find({ $expr: { $gt: [{ $size: "$nacionalidad" }, 1] } });
+        }
+        // Por una nacionalidad especifica, Uso: GET http://localhost:5000/autores?nacionalidad=Mexican
         if (nacionalidad) {
-            query.nacionalidad = { $in: [nacionalidad] };
+            autores = await Autor.find({ nacionalidad: { $in: [nacionalidad] } });
         }
-        
-        autores = await Autor.find(query); // Si no hay consulta, muestra todos los autores
-        
-        if (autores.length > 0) {
-            res.status(200).send(autores);
-        } else {
-            res.status(404).send([]);
+        // Por mas de una cantidad determinada de libros escritos, Uso: GET http://localhost:5000/autores?n=5
+        if (n) {
+            const nInt = parseInt(n);
+            autores = await Autor.aggregate([
+                {
+                    $lookup: {
+                        from: 'libros',
+                        localField: 'codigo', 
+                        foreignField: 'autor_id',
+                        as: 'libros'
+                    }
+                },
+                {
+                    $match: {
+                        $expr: {
+                            $gte: [{ $size: "$libros" }, nInt]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        codigo: 1,
+                        nombre: 1,
+                        apellido: 1,
+                        nacionalidad: 1,
+                        cantidad_libros: { $size: "$libros" }
+                    }
+                }
+            ]);
+        }       
+        // Si no se especifica ningun filtro, muestra todos los autores
+        if (!autores) {
+            autores = await Autor.find();
         }
+  
+        res.status(200).send(autores);
     } catch (error) {
         res.status(500).send({ message: 'Error al buscar los autores.', error });
     }
 });
 
-// Numero total de libros escritos por autor, Uso: GET http://localhost:3000/autores/:id/libros_escritos
+// Numero total de libros escritos por autor, Uso: GET http://localhost:5000/autores/:id/libros_escritos
 app.get('/autores/:id/libros_escritos', async (req, res) => {
     try {
         const { id } = req.params;
@@ -109,7 +141,7 @@ app.get('/autores/:id/libros_escritos', async (req, res) => {
             },
             {
                 $project: {
-                    _id: 0,
+                    _id: 1,
                     codigo: 1,
                     nombre: 1,
                     apellido: 1,
@@ -118,18 +150,13 @@ app.get('/autores/:id/libros_escritos', async (req, res) => {
                 }
             }
         ]);
-
-        if (autorConCantidad.length > 0) {
-            res.status(200).send( autorConCantidad[0] );
-        } else {
-            res.status(404).send({ message: 'Autor no encontrado o no tiene libros.' });
-        }
+        res.status(200).send( autorConCantidad );
     } catch (error) {
         res.status(500).send({ message: 'Error al buscar los autores.', error: error.message });
     }
 });
 
-// Lista de autores y el numero total de libros escritos por cada uno, Uso: GET http://localhost:3000/autores/libros_escritos
+// Lista de autores y el numero total de libros escritos por cada uno, Uso: GET http://localhost:5000/autores/libros_escritos
 app.get('/autores/libros_escritos', async (req, res) => {
     try {
         const autoresConCantidad = await Autor.aggregate([
@@ -153,69 +180,8 @@ app.get('/autores/libros_escritos', async (req, res) => {
             }
         ]);
 
-        if (autoresConCantidad.length > 0) {
-            res.status(200).send(autoresConCantidad);
-        } else {
-            res.status(404).send([]);
-        }
-    } catch (error) {
-        res.status(500).send({ message: 'Error al buscar los autores.', error });
-    }
-});
+        res.status(200).send(autoresConCantidad);
 
-// Lista de autores que han escrito mas de una cantidad determinada de libros, Uso: GET http://localhost:3000/autores/n_libros_escritos?n=5
-app.get('/autores/n_libros_escritos', async (req, res) => {
-    try {
-        const { n } = req.query;
-        const nInt = parseInt(n);
-        const autores = await Autor.aggregate([
-            {
-                $lookup: {
-                    from: 'libros',
-                    localField: 'codigo', 
-                    foreignField: 'autor_id',
-                    as: 'libros'
-                }
-            },
-            {
-                $match: {
-                    $expr: {
-                        $gt: [{ $size: "$libros" }, nInt]
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    codigo: 1,
-                    nombre: 1,
-                    apellido: 1,
-                    nacionalidad: 1,
-                    cantidad_libros: { $size: "$libros" }
-                }
-            }
-        ]);
-
-        if (autores.length > 0) {
-            res.status(200).send(autores);
-        } else {
-            res.status(404).send([]);
-        }
-    } catch (error) {
-        res.status(500).send({ message: 'Error al buscar los autores.', error });
-    }
-});
-
-// Lista de autores que tengan mas de una nacionalidad, Uso: GET http://localhost:3000/autores/varias_nacionalidades
-app.get('/autores/varias_nacionalidades', async (req, res) => {
-    try {
-        const autores = await Autor.find({ $expr: { $gt: [{ $size: "$nacionalidad" }, 1] } });
-
-        if (autores.length > 0) {
-            res.status(200).send(autores);
-        } else {
-            res.status(404).send([]);
-        }
     } catch (error) {
         res.status(500).send({ message: 'Error al buscar los autores.', error });
     }
@@ -236,13 +202,20 @@ app.put('/autores/:id', async (req, res) => {
 // ======================================= Eliminar ======================================
 app.delete('/autores/:id', async (req, res) => {
     const { id } = req.params;
-    const autorEliminado = await Autor.findByIdAndDelete(id);
+    const autor = await Autor.findById(id);
     
-    if (autorEliminado) {
-        res.status(200).send({ message: 'Autor eliminado exitosamente.' });
+    if (autor) {
+        const libros = await Libro.find({ autor_id: autor.codigo });
+        if (libros.length > 0) {
+            res.status(200).send({ status: 'ERR', message: 'No se pudo eliminar el autor. Existen libros asociados.' });
+        } else {
+            const autorEliminado = await Autor.findByIdAndDelete(id);
+            res.status(200).send({ status: 'OK', message: 'Autor eliminado exitosamente.' });
+        }
     } else {
         res.status(404).send({ message: 'Autor no encontrado.' });
     }
+
 });
 
 // ======================================= LIBROS ========================================
@@ -273,37 +246,34 @@ app.get('/libros', async (req, res) => {
         const { genero, desde, hasta, clave, disponible, recientes } = req.query;
         let libros;
         const query = {};
-        // Por genero, Uso: GET http://localhost:3000/libros?genero=Thriller
+        // Por genero, Uso: GET http://localhost:5000/libros?genero=Thriller
         if (genero) {
             query.genero = { $regex: genero, $options: 'i' };
         }
-        // Por rango de año, Uso: GET http://localhost:3000/libros?desde=1990&hasta=2005
+        // Por rango de años, Uso: GET http://localhost:5000/libros?desde=1990&hasta=2005
         if (desde && hasta) {
             query.anio_publicacion = {
                 $gte: parseInt(desde),
                 $lte: parseInt(hasta)
             };
         }
-        // Por titulo parcial, Uso: GET http://localhost:3000/libros?clave=array
+        // Por titulo parcial, Uso: GET http://localhost:5000/libros?clave=array
         if (clave) {
             query.titulo = { $regex: clave, $options: 'i' };
         }
-        // Por disponibilidad, Uso: GET http://localhost:3000/libros?disponible=true
+        // Por disponibilidad, Uso: GET http://localhost:5000/libros?disponible=true
         if (disponible) {
             query.disponibilidad = disponible === 'true';
         }
-        // Por mas recientes, Uso: GET http://localhost:3000/libros?recientes=5
+        // Por mas recientes, Uso: GET http://localhost:5000/libros?recientes=5
         if (recientes) {
             libros = await Libro.find(query).sort({ anio_publicacion: -1 }).limit(recientes);
         } else {
             libros = await Libro.find(query); // Si no hay consulta, muestra todos los libros
         }
 
-        if (libros.length > 0) {
-            res.status(200).send(libros);
-        } else {
-            res.status(404).send([]);
-        }
+        res.status(200).send(libros);
+
     } catch (error) {
         res.status(500).send({ message: 'Error al buscar los libros.', error });
     }
@@ -361,27 +331,21 @@ app.get('/usuarios', async (req, res) => {
         const { desde, hasta } = req.query;
         let usuarios;
         const query = {};
-        // Por registro en un rango de fechas, Uso: GET http://localhost:3000/usuarios?desde=2023&hasta=2024
+        // Por registro en un rango de fechas, Uso: GET http://localhost:5000/usuarios?desde=2023&hasta=2024
         if (desde && hasta) {
             query.fecha_registro = {
                 $gte: new Date(desde),
                 $lte: new Date(hasta)
             };
         }
-
         usuarios = await Usuario.find(query); // Si no hay consulta, muestra todos los usuarios
-
-        if (usuarios.length > 0) {
-            res.status(200).send(usuarios);
-        } else {
-            res.status(404).send([]);
-        }
+        res.status(200).send(usuarios);
     } catch (error) {
         res.status(500).send({ message: 'Error al buscar los usuarios.', error });
     }
 });
 
-// Numero total de usuarios registrados en la biblioteca GET http://localhost:3000/usuarios/total_registrados
+// Numero total de usuarios registrados en la biblioteca GET http://localhost:5000/usuarios/total_registrados
 app.get('/usuarios/total_registrados', async (req, res) => {
     try {
         const totalUsuarios = await Usuario.countDocuments();
@@ -390,6 +354,7 @@ app.get('/usuarios/total_registrados', async (req, res) => {
         res.status(500).send({ message: 'Error al buscar los usuarios.', error });
     }
 });
+
 // ====================================== Actualizar =====================================
 app.put('/usuarios/:id', async (req, res) => {
     const { id } = req.params;
@@ -415,6 +380,6 @@ app.delete('/usuarios/:id', async (req, res) => {
 });
 
 // =================================== Iniciar Servidor ==================================
-app.listen(3000, () => {
-    console.log('Servidor escuchando en puerto http://localhost:3000/');
+app.listen(5000, () => {
+    console.log('Servidor escuchando en puerto http://localhost:5000/');
 });
