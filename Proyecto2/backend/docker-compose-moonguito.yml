@@ -1,0 +1,31 @@
+services:
+  mongo:
+    image: mongo:4.0.4
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - moonguito
+    restart: always
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+    networks:
+      - moonguito
+    restart: always
+
+volumes:
+  data:
+  
+networks:
+  moonguito:
+    driver: bridge
