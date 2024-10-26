@@ -132,3 +132,5 @@ dist
 
 *.png
 storage
+
+backend/data
